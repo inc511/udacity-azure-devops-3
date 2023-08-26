@@ -1,6 +1,6 @@
 {
 	"id": "a5945e0d-e9be-4a59-b7fd-6935f6c7c7ae",
-	"name": "testenv",
+	"name": "environment-test",
 	"values": [
 		{
 			"key": "api_url",

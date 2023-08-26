@@ -142,37 +142,6 @@ stages:
               appType: webApp
               package: $(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip
               deploymentMethod: auto
-              
-  - deployment: VMDeploy
-    displayName: VMDeploy
-    environment:
-      name:  $(environmentName)
-      resourceType: VirtualMachine
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - task: Bash@3
-            inputs:
-              targetType: 'inline'
-              script: |
-                #! /bin/bash
-                sudo apt-get upgrade -y
-                sudo apt-get update -y
-                sudo apt-get install python3-pip -y
-                sudo apt-get install unzip -y
-                sudo apt-get install -y chromium-browser
-                sudo apt-get install -y chromium-driver
-                sudo -H pip3 install --upgrade pip
-                pip install -U selenium
-                echo "python version:"
-                python3 --version 
-                export PATH=$PATH:/usr/bin/chromedriver
-                # agent log analytics
-            #env:  # To use secret variables in a script, we must explicitly map them as environment variables.
-            #  AZURE_LOG_ANALYTICS_ID: $(AZURE_LOG_ANALYTICS_ID)
-            #  AZURE_LOG_ANALYTICS_PRIMARY_KEY: $(AZURE_LOG_ANALYTICS_PRIMARY_KEY)
-            #displayName: Configure VM   
           #--------------------------------------------#    
           # Postman - Install Newman    
           - task: CmdLine@2
@@ -258,6 +227,36 @@ stages:
                 ls -lah stress-test-report/
                 cat jmeter.log
                 
+  - deployment: VMDeploy
+    displayName: VMDeploy
+    environment:
+      name:  $(environmentName)
+      resourceType: VirtualMachine
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: Bash@3
+            inputs:
+              targetType: 'inline'
+              script: |
+                #! /bin/bash
+                sudo apt-get upgrade -y
+                sudo apt-get update -y
+                sudo apt-get install python3-pip -y
+                sudo apt-get install unzip -y
+                sudo apt-get install -y chromium-browser
+                sudo apt-get install -y chromium-driver
+                sudo -H pip3 install --upgrade pip
+                pip install -U selenium
+                echo "python version:"
+                python3 --version 
+                export PATH=$PATH:/usr/bin/chromedriver
+                # agent log analytics
+            #env:  # To use secret variables in a script, we must explicitly map them as environment variables.
+            #  AZURE_LOG_ANALYTICS_ID: $(AZURE_LOG_ANALYTICS_ID)
+            #  AZURE_LOG_ANALYTICS_PRIMARY_KEY: $(AZURE_LOG_ANALYTICS_PRIMARY_KEY)
+            #displayName: Configure VM           
     
 - stage: Test
   jobs:

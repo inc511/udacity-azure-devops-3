@@ -183,12 +183,11 @@ stages:
           - task: AzureWebApp@1
             displayName: 'Deploy Azure Web App'
             inputs:
-              azureSubscription: 'thanhnd'
-              appName: 'thanhnd-application-appservice'    
+              azureSubscription: 'c7c09c90-8a39-450a-ae8d-a9471896daee'
+              appName: 'thanhnd-application-AppService'    
               appType: webApp
               package: $(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip
-              deploymentMethod: zipDeploy
-              startUpCommand: 'dotnet run --project FakeRESTApi.Web/'
+              deploymentMethod: auto
           #--------------------------------------------#    
           # Run JMeter test suite against the App Service
           - task: CmdLine@2
@@ -206,59 +205,148 @@ stages:
                 sudo cat log/jmeter/endurance-test/jmeter.log
               workingDirectory: $(Pipeline.Workspace)/drop-perftests            # ToDo: Use the artifact name from the task above
               
-  #--------------------------------------------#  
-  # Selenium | Functional UI Tests
-  # ToDo: 
+#--------------------------------------------#  
+# Selenium | Functional UI Tests
   - deployment: VMDeploy
-    displayName: Selenium Tests
+    displayName: VMDeploy
     environment:
-      name: $(environmentName)
+      name:  $(environmentName)
       resourceType: VirtualMachine
-      tags: selenium
     strategy:
       runOnce:
         deploy:
           steps:
-          - download: current
-            artifact: drop-ui-tests     # ToDo: Change/provide a name
-            
           - task: Bash@3
             inputs:
               targetType: 'inline'
-              script: |           
+              script: |
                 #! /bin/bash
-                
                 sudo apt-get upgrade -y
+                sudo apt-get update -y
                 sudo apt-get install python3-pip -y
                 sudo apt-get install unzip -y
                 sudo apt-get install -y chromium-browser
-                pip3 install selenium
-                cd ~/
-                DIR=/home/azuredevops/app
-                if [ ! -d "$DIR" ]; then
-                    mkdir app
-                fi
-                mv /home/azuredevops/azagent/_work/1/drop-uitests/$(Build.BuildId)-uitests.zip app
-                cd app
-                unzip -o $(Build.BuildId)-uitests.zip
-                FILE=/home/azuredevops/app/chromedriver_linux64.zip
-                if [ ! -f "$FILE" ]; then
-                    LATEST=$(wget -q -O - http://chromedriver.storage.googleapis.com/LATEST_RELEASE)
-                    wget http://chromedriver.storage.googleapis.com/$LATEST/chromedriver_linux64.zip
-                    unzip -o chromedriver_linux64.zip
-                    sudo ln -s $PWD/chromedriver /usr/local/bin/chromedriver
-                fi
-                export PATH=$PATH:/home/azuredevops/app
-                echo "Starting Selenium Tests"
-                mkdir -p $(Pipeline.Workspace)/drop-uitests/log/selenium
-                python3 test-ui.py > $(Pipeline.Workspace)/drop-uitests/log/selenium/selenium.log
-                ls $(Pipeline.Workspace)/drop-uitests/log/selenium
-                echo "Completed Selenium Tests. Check selenium.log for results."
-                sudo cat $(Pipeline.Workspace)/drop-uitests/log/selenium/selenium.log
-                sudo mkdir -p /var/log
-                sudo cp $(Pipeline.Workspace)/drop-uitests/log/selenium/selenium.log /var/log/selenium.log
-          - task: PublishPipelineArtifact@1
-            displayName: Publish Selenium Log
-            inputs:
-              targetPath: '$(Pipeline.Workspace)/drop-uitests/log/selenium/selenium.log'
-              artifactName: 'drop-selenium-logs'
+                sudo apt-get install -y chromium-driver
+                sudo -H pip3 install --upgrade pip
+                pip install -U selenium
+                echo "python version:"
+                python3 --version 
+                export PATH=$PATH:/usr/bin/chromedriver
+                # agent log analytics
+            #env:  # To use secret variables in a script, we must explicitly map them as environment variables.
+            #  AZURE_LOG_ANALYTICS_ID: $(AZURE_LOG_ANALYTICS_ID)
+            #  AZURE_LOG_ANALYTICS_PRIMARY_KEY: $(AZURE_LOG_ANALYTICS_PRIMARY_KEY)
+            #displayName: Configure VM   
+- stage: Test
+  jobs:
+    - deployment: test_on_vm
+      displayName: UI testing
+      environment:
+       name: $(environmentName)
+       resourceType: VirtualMachine
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+              - task: Bash@3
+                inputs:
+                 targetType: inline
+                 script: |
+                  #!/bin/bash
+                  chromium-browser -version
+                  chromedriver --version
+                  cd $(Pipeline.Workspace)/drop-selenium
+                  unzip -o $(Build.BuildId)-selenium.zip
+                  sudo mkdir -p /var/log/selenium
+                  sudo chmod 664 /var/log/selenium
+                  python3 test-ui.py > ui-logs.log
+                  python3 test-ui.py
+                  sudo mv ui-logs.log /var/log/selenium
+                  cd $(System.DefaultWorkingDirectory)
+                  mkdir -p log/selenium
+                  sudo cp /var/log/selenium/ui-logs.log log/selenium
+              - task: PublishPipelineArtifact@1
+                displayName: Publish selenium logs
+                inputs:
+                  targetPath: '$(System.DefaultWorkingDirectory)/log/selenium/ui-logs.log'
+                  artifactName: 'drop-selenium-logs'
+                  
+    - job: Test_Jmeter
+      displayName: Performance testing
+      pool:
+        vmImage: 'Ubuntu-18.04'
+      steps:
+        - bash: |
+            sudo apt-get install openjdk-11-jre-headless -y
+            java -version
+            wget https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.5.tgz -O jmeter.tgz
+            tar xzvf jmeter.tgz
+            echo "####################"
+            echo "jmeter version : " 
+            apache-jmeter-5.5/bin/jmeter --version   
+            echo "####################"
+            mkdir -p log/jmeter
+            pwd
+            ls -la
+          displayName: Install JMeter
+        - bash: |
+            apache-jmeter-5.5/bin/jmeter -n -t automatedtesting/jmeter/StressTest.jmx -l log/jmeter/stress-test-result.csv -e -f -o log/jmeter/stress-test-html-report -j log/jmeter/jmeter-stress-test.log
+            cat log/jmeter/jmeter-stress-test.log
+          displayName: JMeter stress test
+        - bash: |
+            apache-jmeter-5.5/bin/jmeter -n -t automatedtesting/jmeter/EnduranceTest.jmx -l log/jmeter/endurance-test-result.csv -e -f -o log/jmeter/endurance-test-html-report -j log/jmeter/jmeter-endurance-test.log
+            cat log/jmeter/jmeter-endurance-test.log
+          displayName: JMeter endurance test
+        - task: ArchiveFiles@2
+          displayName: Publish Stress Test Results
+          inputs:
+            rootFolderOrFile: '$(System.DefaultWorkingDirectory)/log/jmeter/stress-test-html-report'
+            includeRootFolder: false
+            archiveType: zip
+            archiveFile: '$(System.DefaultWorkingDirectory)/log/jmeter/stress-test-html-report.zip'
+            verbose: true
+        - task: ArchiveFiles@2
+          displayName: Publish Endurance Test Results
+          inputs:
+            rootFolderOrFile: '$(System.DefaultWorkingDirectory)/log/jmeter/endurance-test-html-report'
+            includeRootFolder: false
+            archiveType: zip
+            archiveFile: '$(System.DefaultWorkingDirectory)/log/jmeter/endurance-test-html-report.zip'
+            verbose: true
+        - task: PublishPipelineArtifact@1
+          displayName: Publish JMeter logs
+          inputs:
+            targetPath: '$(System.DefaultWorkingDirectory)/log/jmeter'
+            artifact: drop-jmeter   
+
+    - job: Test_Post_man
+      displayName: Postman Test
+      pool:
+          vmImage: 'Ubuntu-18.04'
+      steps: 
+        - task: NodeTool@0
+          displayName: Install Node v14.X
+          inputs:
+            versionSpec: '14.x'
+        - bash: |
+            node -v
+            mkdir -p log/newman
+            newman -v
+          displayName: Install Newman CLI
+        - bash: |
+              newman run automatedtesting/postman/regression-test.json -e automatedtesting/postman/environment-test.json --reporters cli,junit --reporter-junit-export log/newman/regression-test.xml --suppress-exit-code
+          displayName: Run Regression Test
+        - bash: |
+              newman run automatedtesting/postman/data-test.json -e automatedtesting/postman/environment-test.json --reporters cli,junit --reporter-junit-export log/newman/data-test.xml --suppress-exit-code
+          displayName: Run Validation Test
+        - task: PublishPipelineArtifact@1
+          displayName: Publish Newman logs
+          inputs:
+            targetPath: '$(System.DefaultWorkingDirectory)/log/newman'
+            artifactName: 'drop-newman-logs'
+        - task: PublishTestResults@2
+          displayName: Publish report postman
+          condition: always()
+          inputs:
+           testResultsFormat: JUnit
+           testResultsFiles: '$(System.DefaultWorkingDirectory)/log/newman/*.xml'

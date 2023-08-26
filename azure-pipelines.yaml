@@ -70,56 +70,6 @@ stages:
     #   secureFile: 
 
     
-    # Run Terraform Apply
-    - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV3@3
-      displayName: Terraform apply
-      inputs:
-        provider: 'azurerm'
-        command: 'apply'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
-        environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
-
-    # ToDo: Change the workingDirectory path, as applicable to you
-    # Destroy the resources in Azure by running a separate pipeline. 
-    # - task: TerraformTaskV3@3
-    #   displayName: Terraform destroy
-    #   inputs:
-    #     provider: 'azurerm'
-    #     command: 'destroy'
-    #     workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
-    #     environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
-
-#--------------------------------------------#    
-    # Postman - Install Newman    
-    - task: CmdLine@2
-      displayName: Install Newman
-      inputs:
-        script: 'sudo apt -y install npm && sudo npm install -g newman'
-        workingDirectory: $(System.DefaultWorkingDirectory)
-    # Postman Data Validation Test Suite    
-    - task: CmdLine@2
-      displayName: Run Data Validation Tests
-      continueOnError: true
-      inputs:
-        script: 'newman run data-test.json -e environment-test.json --reporters cli,junit --reporter-junit-export data-test.xml'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
-    # Postman Regression Test Suite    
-    - task: CmdLine@2
-      displayName: Run Regression Tests
-      continueOnError: true
-      inputs:
-        script: 'newman run regression-test.json -e  environment-test.json --reporters cli,junit --reporter-junit-export regression-test.xml'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
-    # Postman - Publish Results 
-    # ToDo: Complete the task as explained here: https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/test/publish-test-results?view=azure-devops&tabs=trx%2Cyaml#yaml-snippet
-    - task: PublishTestResults@2
-      inputs:
-        testResultsFormat: 'JUnit'
-        testResultsFiles: '**-test.xml'
-        searchFolder: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
-        mergeTestResults: true
-        testRunTitle: 'Postman tests result'
-
     #--------------------------------------------#
     # Selenium (UI) Test Suite - Archive the package  
     # "ArchiveFiles@2" picks up the web package and archives it.
@@ -135,6 +85,7 @@ stages:
       displayName: 'Upload Package'
       artifact: drop-uitests
 
+
     #--------------------------------------------#    
     # FakeRestAPI - Archive
     - task: ArchiveFiles@2
@@ -144,16 +95,19 @@ stages:
         includeRootFolder: false
         archiveType: 'zip'
         archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip'
-    - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip
-      displayName: 'Upload Package'
+   # FakeRestAPI - Publish
+    - publish: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip'
+      displayName: 'Upload fakerrestapi Package'
       artifact: drop-fakerestapi
+
 
     #--------------------------------------------#  
     # JMeter (Performance) Test Suite - Archive
+    # ToDo: Complete the ArchiveFiles@2 task and publish step 
     - task: ArchiveFiles@2
       displayName: 'Archive PerformanceTestSuite'
       inputs:
-        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/jmeter'
+        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/jmeter/test-suite'
         includeRootFolder: false
         archiveType: 'zip'
         archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-perftests.zip'
@@ -233,14 +187,14 @@ stages:
             displayName: Run Data Validation Tests
             continueOnError: true
             inputs:
-              script: 'newman run Validation.postman_collection.json -e my-eviroment.postman_environment.json --reporters cli,junit --reporter-junit-export TEST-DataValidation.xml'
+              script: 'newman run data-test.json -e evironment-test.json --reporters cli,junit --reporter-junit-export TEST-DataValidation.xml'
               workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
           # Postman Regression Test Suite    
           - task: CmdLine@2
             displayName: Run Regression Tests
             continueOnError: true
             inputs:
-              script: 'newman run Regression.postman_collection.json -e my-eviroment.postman_environment.json --reporters cli,junit --reporter-junit-export TEST-Regression.xml'
+              script: 'newman run regression.json -e evironment-test.json --reporters cli,junit --reporter-junit-export TEST-Regression.xml'
               workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
           # Postman - Publish Results 
           - task: PublishTestResults@2

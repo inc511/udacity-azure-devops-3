@@ -255,6 +255,9 @@ stages:
                   
     - job: Test_Jmeter
       displayName: Performance testing
+      environment:
+       name: $(environmentName)
+       resourceType: VirtualMachine
       pool:
         vmImage: 'Ubuntu-18.04'
       steps:
@@ -303,6 +306,9 @@ stages:
 
     - job: Test_Post_man
       displayName: Postman Test
+      environment:
+       name: $(environmentName)
+       resourceType: VirtualMachine
       pool:
           vmImage: 'Ubuntu-18.04'
       steps: 

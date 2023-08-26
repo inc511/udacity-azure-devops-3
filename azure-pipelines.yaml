@@ -219,6 +219,91 @@ stages:
             #  AZURE_LOG_ANALYTICS_ID: $(AZURE_LOG_ANALYTICS_ID)
             #  AZURE_LOG_ANALYTICS_PRIMARY_KEY: $(AZURE_LOG_ANALYTICS_PRIMARY_KEY)
             #displayName: Configure VM   
+          #--------------------------------------------#    
+          # Postman - Install Newman    
+          - task: CmdLine@2
+            displayName: Install Newman
+            inputs:
+              script: |
+                sudo apt-get -y install npm
+                sudo npm install -g newman
+              workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
+          # Postman Data Validation Test Suite    
+          - task: CmdLine@2
+            displayName: Run Data Validation Tests
+            continueOnError: true
+            inputs:
+              script: 'newman run Validation.postman_collection.json -e my-eviroment.postman_environment.json --reporters cli,junit --reporter-junit-export TEST-DataValidation.xml'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
+          # Postman Regression Test Suite    
+          - task: CmdLine@2
+            displayName: Run Regression Tests
+            continueOnError: true
+            inputs:
+              script: 'newman run Regression.postman_collection.json -e my-eviroment.postman_environment.json --reporters cli,junit --reporter-junit-export TEST-Regression.xml'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
+          # Postman - Publish Results 
+          - task: PublishTestResults@2
+            inputs:
+              testResultsFormat: 'JUnit'
+              testResultsFiles: '**/TEST-*.xml'
+              searchFolder: 'automatedtesting/postman'
+              mergeTestResults: true
+              testRunTitle: 'Publish test results'
+
+
+        #--------------------------------------------#    
+          # Jmeter - Install Jmeter
+          - task: JMeterInstaller@0
+            displayName: 'Install JMeter 5.2.1'
+            inputs:
+              jmeterVersion: '5.2.1'
+          # Jmeter - Endurance Test Suite     
+          - task: Bash@3
+            displayName: 'Endurance Test Suite'
+            inputs:
+              targetType: 'inline'
+              script: |
+                jmeter -n \
+                  -t automatedtesting/jmeter/test-suite/EnduranceTest.jmx \
+                  -l endurance-test-report/endurance-results.jtl \
+                  -e \
+                  -o endurance-test-report
+          # Publish - Endurance Test Suite
+          - task: publishhtmlreport@1
+            displayName: 'Publish Endurance Test Results'
+            inputs:
+              htmlType: 'Jmeter'
+              JmeterReportsPath: '$(Build.SourcesDirectory)/endurance-test-report'
+          # Jmeter - Stress Test Suite    
+          - task: Bash@3
+            displayName: 'Stress Test Suite'
+            inputs:
+              targetType: 'inline'
+              script: |
+                jmeter -n \
+                  -t automatedtesting/jmeter/test-suite/StressTest.jmx \
+                  -l stress-test-report/stress-results.jtl \
+                  -e \
+                  -o stress-test-report
+          # Publish - Stress Test Suite
+          - task: publishhtmlreport@1
+            displayName: 'Publish Stress Test Results'
+            inputs:
+              htmlType: 'Jmeter'
+              JmeterReportsPath: '$(Build.SourcesDirectory)/stress-test-report'   
+
+
+          # Print Performance Test Logs
+          - task: Bash@3
+            displayName: 'Print Performance Test Logs'
+            inputs:
+              targetType: 'inline'
+              script: |
+                ls -lah endurance-test-report/
+                ls -lah stress-test-report/
+                cat jmeter.log
+                
     
 - stage: Test
   jobs:
@@ -253,83 +338,3 @@ stages:
                 inputs:
                   targetPath: '$(System.DefaultWorkingDirectory)/log/selenium/ui-logs.log'
                   artifactName: 'drop-selenium-logs'
-    - job: Test_Jmeter
-      displayName: Performance testing
-      pool:
-        vmImage: 'Ubuntu-18.04'
-      
-      steps:
-        - bash: |
-            sudo apt-get install openjdk-11-jre-headless -y
-            java -version
-            wget https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.5.tgz -O jmeter.tgz
-            tar xzvf jmeter.tgz
-            echo "####################"
-            echo "jmeter version : " 
-            apache-jmeter-5.5/bin/jmeter --version   
-            echo "####################"
-            mkdir -p log/jmeter
-            pwd
-            ls -la
-          displayName: Install JMeter
-        - bash: |
-            apache-jmeter-5.5/bin/jmeter -n -t automatedtesting/jmeter/StressTest.jmx -l log/jmeter/stress-test-result.csv -e -f -o log/jmeter/stress-test-html-report -j log/jmeter/jmeter-stress-test.log
-            cat log/jmeter/jmeter-stress-test.log
-          displayName: JMeter stress test
-        - bash: |
-            apache-jmeter-5.5/bin/jmeter -n -t automatedtesting/jmeter/EnduranceTest.jmx -l log/jmeter/endurance-test-result.csv -e -f -o log/jmeter/endurance-test-html-report -j log/jmeter/jmeter-endurance-test.log
-            cat log/jmeter/jmeter-endurance-test.log
-          displayName: JMeter endurance test
-        - task: ArchiveFiles@2
-          displayName: Publish Stress Test Results
-          inputs:
-            rootFolderOrFile: '$(System.DefaultWorkingDirectory)/log/jmeter/stress-test-html-report'
-            includeRootFolder: false
-            archiveType: zip
-            archiveFile: '$(System.DefaultWorkingDirectory)/log/jmeter/stress-test-html-report.zip'
-            verbose: true
-        - task: ArchiveFiles@2
-          displayName: Publish Endurance Test Results
-          inputs:
-            rootFolderOrFile: '$(System.DefaultWorkingDirectory)/log/jmeter/endurance-test-html-report'
-            includeRootFolder: false
-            archiveType: zip
-            archiveFile: '$(System.DefaultWorkingDirectory)/log/jmeter/endurance-test-html-report.zip'
-            verbose: true
-        - task: PublishPipelineArtifact@1
-          displayName: Publish JMeter logs
-          inputs:
-            targetPath: '$(System.DefaultWorkingDirectory)/log/jmeter'
-            artifact: drop-jmeter   
-
-    - job: Test_Post_man
-      displayName: Postman Test
-      pool:
-          vmImage: 'Ubuntu-18.04'
-      steps: 
-        - task: NodeTool@0
-          displayName: Install Node v14.X
-          inputs:
-            versionSpec: '14.x'
-        - bash: |
-            node -v
-            mkdir -p log/newman
-            newman -v
-          displayName: Install Newman CLI
-        - bash: |
-              newman run automatedtesting/postman/udacity-project3-ReTest.postman_collection.json -e automatedtesting/postman/Env.RegressionTest.postman_environment.json --reporters cli,junit --reporter-junit-export log/newman/RegressionTest.xml --suppress-exit-code
-          displayName: Run Regression Test
-        - bash: |
-              newman run automatedtesting/postman/udacity-project3-ValTest.postman_collection.json -e automatedtesting/postman/Env.ValidationTest.postman_environment.json --reporters cli,junit --reporter-junit-export log/newman/ValidationTest.xml --suppress-exit-code
-          displayName: Run Validation Test
-        - task: PublishPipelineArtifact@1
-          displayName: Publish Newman logs
-          inputs:
-            targetPath: '$(System.DefaultWorkingDirectory)/log/newman'
-            artifactName: 'drop-newman-logs'
-        - task: PublishTestResults@2
-          displayName: Publish report postman
-          condition: always()
-          inputs:
-           testResultsFormat: JUnit
-           testResultsFiles: '$(System.DefaultWorkingDirectory)/log/newman/*.xml'

@@ -184,9 +184,11 @@ stages:
             displayName: 'Deploy Azure Web App'
             inputs:
               azureSubscription: 'thanhnd'
-              appName: 'thanhnd-app'               # ToDo
+              appName: 'thanhnd-app-fake-rest-api'    
               appType: webApp
-              package: $(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip      # ToDo: Use the published zip artifact. 
+              package: $(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip
+              deploymentMethod: zipDeploy
+              startUpCommand: 'dotnet run --project FakeRESTApi.Web/'
           #--------------------------------------------#    
           # Run JMeter test suite against the App Service
           - task: CmdLine@2

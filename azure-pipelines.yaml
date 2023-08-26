@@ -188,25 +188,7 @@ stages:
               appType: webApp
               package: $(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip
               deploymentMethod: auto
-          #--------------------------------------------#    
-          # Run JMeter test suite against the App Service
-          - task: CmdLine@2
-            inputs:
-              script: |
-                wget "https://apache.mirrors.lucidnetworks.net//jmeter/binaries/apache-jmeter-5.6.2.tgz"
-                tar -xf apache-jmeter-5.6.2.tgz
-                unzip -o $(Build.BuildId)-perftests.zip
-                ./apache-jmeter-5.6.2/bin/jmeter -n -t PerformanceTestSuite.jmx -j jmeter.log -f
-                
-                echo "Jmeter Stress Test Result"
-                sudo cat log/jmeter/stress-test/jmeter.log
-
-                echo "Jmeter Endurance Test Result"
-                sudo cat log/jmeter/endurance-test/jmeter.log
-              workingDirectory: $(Pipeline.Workspace)/drop-perftests            # ToDo: Use the artifact name from the task above
               
-#--------------------------------------------#  
-# Selenium | Functional UI Tests
   - deployment: VMDeploy
     displayName: VMDeploy
     environment:

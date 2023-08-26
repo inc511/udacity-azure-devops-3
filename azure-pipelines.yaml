@@ -175,6 +175,7 @@ stages:
       vmImage: 'Ubuntu-18.04'
     environment: 
       name: $(environmentName)
+      resourceType: VirtualMachine
     strategy:
       runOnce:
         deploy:

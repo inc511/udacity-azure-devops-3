@@ -101,21 +101,21 @@ stages:
       displayName: Run Data Validation Tests
       continueOnError: true
       inputs:
-        script: 'newman run environment-test.json -e environment-test.json --reporters cli,junit --reporter-junit-export environment-test.xml'
+        script: 'newman run data-test.json -e environment-test.json --reporters cli,junit --reporter-junit-export data-test.xml'
         workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
     # Postman Regression Test Suite    
     - task: CmdLine@2
       displayName: Run Regression Tests
       continueOnError: true
       inputs:
-        script: 'newman run regression-test.json -e regression-test.json --reporters cli,junit --reporter-junit-export regression-test.xml'
+        script: 'newman run regression-test.json -e  environment-test.json --reporters cli,junit --reporter-junit-export regression-test.xml'
         workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
     # Postman - Publish Results 
     # ToDo: Complete the task as explained here: https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/test/publish-test-results?view=azure-devops&tabs=trx%2Cyaml#yaml-snippet
     - task: PublishTestResults@2
       inputs:
         testResultsFormat: 'JUnit'
-        testResultsFiles: '**/TEST-*.xml'
+        testResultsFiles: '**-test.xml'
         searchFolder: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
         mergeTestResults: true
         testRunTitle: 'Postman tests result'

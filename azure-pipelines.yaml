@@ -150,27 +150,26 @@ stages:
               script: |
                 sudo apt-get -y install npm
                 sudo npm install -g newman
-              workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
+              workingDirectory: '$(System.DefaultWorkingDirectory)'
           # Postman Data Validation Test Suite    
           - task: CmdLine@2
             displayName: Run Data Validation Tests
             continueOnError: true
             inputs:
               script: 'newman run data-test.json -e evironment-test.json --reporters cli,junit --reporter-junit-export TEST-DataValidation.xml'
-              workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
+              workingDirectory: '$(System.DefaultWorkingDirectory)'
           # Postman Regression Test Suite    
           - task: CmdLine@2
             displayName: Run Regression Tests
             continueOnError: true
             inputs:
               script: 'newman run regression.json -e evironment-test.json --reporters cli,junit --reporter-junit-export TEST-Regression.xml'
-              workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
+              workingDirectory: '$(System.DefaultWorkingDirectory)'
           # Postman - Publish Results 
           - task: PublishTestResults@2
             inputs:
               testResultsFormat: 'JUnit'
               testResultsFiles: '**/TEST-*.xml'
-              searchFolder: 'automatedtesting/postman'
               mergeTestResults: true
               testRunTitle: 'Publish test results'
 
@@ -188,7 +187,7 @@ stages:
               targetType: 'inline'
               script: |
                 jmeter -n \
-                  -t automatedtesting/jmeter/test-suite/EnduranceTest.jmx \
+                  -t EnduranceTest.jmx \
                   -l endurance-test-report/endurance-results.jtl \
                   -e \
                   -o endurance-test-report
@@ -205,7 +204,7 @@ stages:
               targetType: 'inline'
               script: |
                 jmeter -n \
-                  -t automatedtesting/jmeter/test-suite/StressTest.jmx \
+                  -t StressTest.jmx \
                   -l stress-test-report/stress-results.jtl \
                   -e \
                   -o stress-test-report

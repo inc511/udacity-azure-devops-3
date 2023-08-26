@@ -184,7 +184,7 @@ stages:
             displayName: 'Deploy Azure Web App'
             inputs:
               azureSubscription: 'thanhnd'
-              appName: 'thanhnd-application-AppService'    
+              appName: 'thanhnd-application-appservice'    
               appType: webApp
               package: $(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip
               deploymentMethod: zipDeploy

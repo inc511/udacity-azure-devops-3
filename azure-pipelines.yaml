@@ -255,9 +255,6 @@ stages:
                   artifactName: 'drop-selenium-logs'
     - job: Test_Jmeter
       displayName: Performance testing
-      environment:
-        name: $(environmentName)
-        resourceType: VirtualMachine
       pool:
         vmImage: 'Ubuntu-18.04'
       
@@ -309,9 +306,6 @@ stages:
       displayName: Postman Test
       pool:
           vmImage: 'Ubuntu-18.04'
-      environment:
-        name: $(environmentName)
-        resourceType: VirtualMachine
       steps: 
         - task: NodeTool@0
           displayName: Install Node v14.X

@@ -1,3 +1,5 @@
+name: $(Date:yyyyMMdd)$(Rev:.r)
+
 name: Azure Pipelines
 
 # Start with a minimal pipeline that you can customize to build and deploy your code.

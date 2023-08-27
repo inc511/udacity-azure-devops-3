@@ -268,7 +268,7 @@ stages:
             displayName: Publish report postman
             condition: always()
             inputs:
-             testResultsFormat: JUnit
-             testResultsFiles: '$(System.DefaultWorkingDirectory)/log/newman/*.xml'
-                targetPath: '$(System.DefaultWorkingDirectory)/log/selenium/ui-logs.log'
-                artifactName: 'drop-selenium-logs'
+              testResultsFormat: JUnit
+              testResultsFiles: '$(System.DefaultWorkingDirectory)/log/newman/*.xml'
+              targetPath: '$(System.DefaultWorkingDirectory)/log/selenium/ui-logs.log'
+              artifactName: 'drop-selenium-logs'

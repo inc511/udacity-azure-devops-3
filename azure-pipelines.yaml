@@ -7,7 +7,7 @@ trigger:
 pool: thanhnd
 
 variables:
-  python.version: '3.8'
+  python.version: '3.7.6'
   azureServiceConnectionId: 'thanhnd'
   # Project root folder. Point to the folder containing manage.py file.
   projectRoot: $(System.DefaultWorkingDirectory)

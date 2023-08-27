@@ -15,14 +15,8 @@ stages:
       displayName: Terraform
       pool: thanhnd
       steps:
-      - task: DownloadSecureFile@1
-        name: terraform
-        displayName: Download terraform.tfvars
-        inputs:
-          secureFile: 'terraform.tfvars'
-
       - checkout: self
-      - task: TerraformInstaller@0
+      - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV3@3
         displayName: Install Terraform
         inputs:
           terraformVersion: 'latest'
@@ -33,7 +27,7 @@ stages:
           targetType: 'inline'
           script: cp $(Agent.TempDirectory)/terraform.tfvars $(System.DefaultWorkingDirectory)/terraform
 
-      - task: TerraformCLI@0
+      - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV3@3
         displayName: 'terraform init'
         inputs:
           provider: 'azurerm'
@@ -45,7 +39,7 @@ stages:
           backendAzureRmContainerName: 'tfstate'
           backendAzureRmKey: 'test.terraform.tfstate'
           
-      - task: TerraformCLI@0
+      - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV3@3
         displayName: Terraform Validate
         inputs:
           provider: 'azurerm'
@@ -61,7 +55,7 @@ stages:
           workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
           environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
           
-      - task: TerraformCLI@0
+      - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV3@3
         displayName: Terraform Apply
         inputs:
           provider: 'azurerm'

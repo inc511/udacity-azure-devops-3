@@ -208,19 +208,18 @@ stages:
                 sudo apt install -y default-jdk
                 sudo apt-get -y install zip
 
-                # download Jmeter 
+                # Jmeter download
                 curl -O https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.5.tgz
                 tar -xvf apache-jmeter-5.5.tgz
 
-                # Download CMD Runner in lib folder
+                # Include CMD in lib folder
                 cd apache-jmeter-5.5/lib
                 curl -O https://repo1.maven.org/maven2/kg/apc/cmdrunner/2.2.1/cmdrunner-2.2.1.jar
 
-                # Download jmeter plugin Manager
+                # Install plugins
                 cd ext/
                 curl -O https://repo1.maven.org/maven2/kg/apc/jmeter-plugins-manager/1.6/jmeter-plugins-manager-1.6.jar
 
-                # Download plugin
                 cd ../
                 java  -jar cmdrunner-2.2.1.jar --tool org.jmeterplugins.repository.PluginManagerCMD install-all-except jpgc-hadoop,jpgc-oauth,ulp-jmeter-autocorrelator-plugin,ulp-jmeter-videostreaming-plugin,ulp-jmeter-gwt-plugin,tilln-iso8583
 
@@ -229,7 +228,7 @@ stages:
                 cd bin/
                 ./jmeter.sh --version
 
-                # Move Jmeter to OPT and Put Jmeter in PATH variable
+                # Config Jmeter to System Path
                 cd ../../
                 sudo cp -r apache-jmeter-5.5 /opt/
                 nano .profile
@@ -238,8 +237,6 @@ stages:
                 source ~/.profile
                 echo $PATH
 
-                # check Version
-                jmeter --version
 
                 # Unzip Folder
                 cd $(Pipeline.Workspace)/jmeter-test/
@@ -273,6 +270,8 @@ stages:
               targetType: 'inline'
               script: |           
                 #! /bin/bash
+
+                # Setup environment (pthon, selenium)
                 sudo apt-get upgrade -y
                 sudo apt-get install python3-pip -y
                 sudo apt-get install unzip -y

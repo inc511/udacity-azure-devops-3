@@ -6,8 +6,8 @@ tenant_id = "026bc3f3-61ba-4f15-8e28-0f87ad15dea8"
 
 # Resource Group/Location
 location = "East US"
-resource_group = "vm2_group"
-application_type = "thanhnd-application"
+resource_group = "Azuredevops"
+application_type = "thanhnd61-application"
 
 # Network
 virtual_network_name = "myvirtualnetwork"

@@ -57,6 +57,9 @@ stages:
     - job: Build
       pool:
         vmImage: 'Ubuntu-18.04'
+      environment:
+        name: $(environmentName)
+        resourceType: VirtualMachine
       steps:
       - task: ArchiveFiles@2
         displayName: Archive FakeRestAPI

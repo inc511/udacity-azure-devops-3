@@ -281,10 +281,7 @@ stages:
                 cd $(Pipeline.Workspace)/selenium-test
                 unzip $(Build.BuildId)-uitests.zip -d $(Build.BuildId)-uitests
                 cd $(Build.BuildId)-uitests
-                wget https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/116.0.5845.96/linux64/chromedriver-linux64.zip
-                unzip -o chromedriver_linux64.zip
-                sudo ln -s $PWD/chromedriver /usr/bin/chromedriver
-                export PATH=$PATH:/usr/bin/chromedriver
+                LATEST_VERSION=$(curl -s https://chromedriver.storage.googleapis.com/LATEST_RELEASE) && wget -O /tmp/chromedriver.zip https://chromedriver.storage.googleapis.com/$LATEST_VERSION/chromedriver_linux64.zip && sudo unzip /tmp/chromedriver.zip chromedriver -d /usr/local/bin/
 
                 sudo python3 test-ui.py >> selenium_result.log 
 

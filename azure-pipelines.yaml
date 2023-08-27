@@ -192,7 +192,7 @@ stages:
             displayName: 'Deploy Azure Web App'
             inputs:
               azureSubscription: '$(azureServiceConnectionId)'
-              appName: 'thanhnd-application-AppService'          
+              appName: 'thanhnd61-application-AppService'          
               appType: webApp
               package: $(Pipeline.Workspace)/fakerestapi-tests/$(Build.BuildId)-fakerestapi.zip    
           #--------------------------------------------#    

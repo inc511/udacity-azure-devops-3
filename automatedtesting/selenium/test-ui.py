@@ -81,11 +81,14 @@ def removeItem(driver, modifiedItems):
 
     print(get_ts() + "All items have removed from cart")
 
-if __name__ == "__main__":
+def main():
     driver = setup_chrome_driver()
     login('standard_user', 'secret_sauce', driver)
     modifiedItems = "6"
     addItem(driver, modifiedItems)
     removeItem(driver, modifiedItems)
+
+main()
+
 
 

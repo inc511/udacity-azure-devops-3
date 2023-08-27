@@ -1,6 +1,6 @@
 #!/bin/bash
-RESOURCE_GROUP_NAME="vm1_group"
-STORAGE_ACCOUNT_NAME="thanhnd1"
+RESOURCE_GROUP_NAME="Azuredevops"
+STORAGE_ACCOUNT_NAME="thanhnd61"
 CONTAINER_NAME="tfstate"
 
 # This command is not needed in the Udacity provided Azure account. 

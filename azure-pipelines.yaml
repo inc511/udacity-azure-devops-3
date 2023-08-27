@@ -47,7 +47,7 @@ stages:
           workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
           backendServiceArm: '$(azureServiceConnectionId)'
        
-      - task: TerraformCLI@0
+      - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV3@3
         displayName: Terraform Plan
         inputs:
           provider: 'azurerm'

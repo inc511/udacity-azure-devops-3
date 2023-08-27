@@ -1,0 +1,21 @@
+timeStamp,elapsed,label,responseCode,responseMessage,threadName,dataType,success,failureMessage,bytes,sentBytes,grpThreads,allThreads,URL,Latency,IdleTime,Connect
+1693130565327,413,GET All Activities,404,Not Found,Stress Test 1-1,text,false,,341,193,2,2,https://thanhnd61-application-AppService.azurewebsites.net/api/Activities,413,0,379
+1693130565653,85,GET All Activities,404,Not Found,Stress Test 1-2,text,false,,341,193,2,2,https://thanhnd61-application-AppService.azurewebsites.net/api/Activities,84,0,48
+1693130565742,4,GET All Activities,404,Not Found,Stress Test 1-1,text,false,,341,193,2,2,https://thanhnd61-application-AppService.azurewebsites.net/api/Activities,4,0,0
+1693130565743,6,GET All Activities,404,Not Found,Stress Test 1-2,text,false,,341,193,2,2,https://thanhnd61-application-AppService.azurewebsites.net/api/Activities,6,0,0
+1693130565747,4,GET All Activities,404,Not Found,Stress Test 1-1,text,false,,341,193,2,2,https://thanhnd61-application-AppService.azurewebsites.net/api/Activities,3,0,0
+1693130565751,3,GET All Activities,404,Not Found,Stress Test 1-1,text,false,,341,193,2,2,https://thanhnd61-application-AppService.azurewebsites.net/api/Activities,3,0,0
+1693130565749,7,GET All Activities,404,Not Found,Stress Test 1-2,text,false,,341,193,2,2,https://thanhnd61-application-AppService.azurewebsites.net/api/Activities,7,0,0
+1693130565755,4,GET All Activities,404,Not Found,Stress Test 1-1,text,false,,341,193,2,2,https://thanhnd61-application-AppService.azurewebsites.net/api/Activities,4,0,0
+1693130565757,6,GET All Activities,404,Not Found,Stress Test 1-2,text,false,,341,193,2,2,https://thanhnd61-application-AppService.azurewebsites.net/api/Activities,5,0,0
+1693130565759,4,GET All Activities,404,Not Found,Stress Test 1-1,text,false,,341,193,2,2,https://thanhnd61-application-AppService.azurewebsites.net/api/Activities,4,0,0
+1693130565765,4,GET All Activities,404,Not Found,Stress Test 1-1,text,false,,341,193,2,2,https://thanhnd61-application-AppService.azurewebsites.net/api/Activities,4,0,0
+1693130565771,4,GET All Activities,404,Not Found,Stress Test 1-1,text,false,,341,193,2,2,https://thanhnd61-application-AppService.azurewebsites.net/api/Activities,4,0,0
+1693130565770,6,GET All Activities,404,Not Found,Stress Test 1-2,text,false,,341,193,2,2,https://thanhnd61-application-AppService.azurewebsites.net/api/Activities,6,0,0
+1693130565776,6,GET All Activities,404,Not Found,Stress Test 1-2,text,false,,341,193,2,2,https://thanhnd61-application-AppService.azurewebsites.net/api/Activities,6,0,0
+1693130565778,6,GET All Activities,404,Not Found,Stress Test 1-1,text,false,,341,193,2,2,https://thanhnd61-application-AppService.azurewebsites.net/api/Activities,6,0,0
+1693130565782,7,GET All Activities,404,Not Found,Stress Test 1-2,text,false,,341,193,2,2,https://thanhnd61-application-AppService.azurewebsites.net/api/Activities,7,0,0
+1693130565785,6,GET All Activities,404,Not Found,Stress Test 1-1,text,false,,341,193,2,2,https://thanhnd61-application-AppService.azurewebsites.net/api/Activities,6,0,0
+1693130565789,4,GET All Activities,404,Not Found,Stress Test 1-2,text,false,,341,193,2,2,https://thanhnd61-application-AppService.azurewebsites.net/api/Activities,4,0,0
+1693130565794,5,GET All Activities,404,Not Found,Stress Test 1-2,text,false,,341,193,1,1,https://thanhnd61-application-AppService.azurewebsites.net/api/Activities,5,0,0
+1693130565799,5,GET All Activities,404,Not Found,Stress Test 1-2,text,false,,341,193,1,1,https://thanhnd61-application-AppService.azurewebsites.net/api/Activities,5,0,0

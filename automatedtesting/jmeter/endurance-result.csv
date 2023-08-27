@@ -1,0 +1,5 @@
+timeStamp,elapsed,label,responseCode,responseMessage,threadName,dataType,success,failureMessage,bytes,sentBytes,grpThreads,allThreads,URL,Latency,IdleTime,Connect
+1693130570681,381,GET All Activities,404,Not Found,Endurance Tests 1-2,text,false,,341,193,2,2,https://thanhnd61-application-AppService.azurewebsites.net/api/Activities,381,0,359
+1693130571066,6,GET All Activities,404,Not Found,Endurance Tests 1-2,text,false,,341,193,2,2,https://thanhnd61-application-AppService.azurewebsites.net/api/Activities,6,0,0
+1693130570684,411,GET All Activities,404,Not Found,Endurance Tests 1-1,text,false,,341,193,1,1,https://thanhnd61-application-AppService.azurewebsites.net/api/Activities,411,0,360
+1693130571097,5,GET All Activities,404,Not Found,Endurance Tests 1-1,text,false,,341,193,1,1,https://thanhnd61-application-AppService.azurewebsites.net/api/Activities,5,0,0

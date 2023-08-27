@@ -10,47 +10,47 @@ variables:
 stages:
 - stage: Build
     jobs:
-      - job: BuildInfrastructure
-        steps:
-          - script: |
-              echo $(System.DefaultWorkingDirectory)
-            displayName: "Show working directory"
+    - job: BuildInfrastructure
+      steps:
+        - script: |
+            echo $(System.DefaultWorkingDirectory)
+          displayName: "Show working directory"
 
-          # Install Terraform on the pipeline agent
-          - task: TerraformInstaller@1
-            displayName: "Terrafom installation"
-            inputs:
-              terraformVersion: "latest"
-          - task: TerraformTaskV4@4
-            displayName: Terraform init
-            inputs:
-              provider: "azurerm"
-              command: "init"
-              workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
-              backendServiceArm: '$(azureServiceConnectionId)'
-              backendAzureRmResourceGroupName: 'vm1_group'
-              backendAzureRmStorageAccountName: 'thanhnd1'
-              backendAzureRmContainerName: "tfstate"
-              backendAzureRmKey: 'test.terraform.tfstate'
-          - task: TerraformTaskV4@4
-            displayName: Terraform validate
-            inputs:
-              provider: "azurerm"
-              command: "validate"
-          - task: TerraformTaskV4@4
-            displayName: Terraform plan
-            inputs:
-              provider: "azurerm"
-              command: "plan"
-              workingDirectory: "$(System.DefaultWorkingDirectory)/terraform"
-              environmentServiceNameAzureRM: "myServiceConnection"
-          - task: TerraformTaskV4@4
-            displayName: Terraform apply
-            inputs:
-              provider: "azurerm"
-              command: "apply"
-              workingDirectory: "$(System.DefaultWorkingDirectory)/terraform"
-              environmentServiceNameAzureRM: "myServiceConnection"
+        # Install Terraform on the pipeline agent
+        - task: TerraformInstaller@1
+          displayName: "Terrafom installation"
+          inputs:
+            terraformVersion: "latest"
+        - task: TerraformTaskV4@4
+          displayName: Terraform init
+          inputs:
+            provider: "azurerm"
+            command: "init"
+            workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+            backendServiceArm: '$(azureServiceConnectionId)'
+            backendAzureRmResourceGroupName: 'vm1_group'
+            backendAzureRmStorageAccountName: 'thanhnd1'
+            backendAzureRmContainerName: "tfstate"
+            backendAzureRmKey: 'test.terraform.tfstate'
+        - task: TerraformTaskV4@4
+          displayName: Terraform validate
+          inputs:
+            provider: "azurerm"
+            command: "validate"
+        - task: TerraformTaskV4@4
+          displayName: Terraform plan
+          inputs:
+            provider: "azurerm"
+            command: "plan"
+            workingDirectory: "$(System.DefaultWorkingDirectory)/terraform"
+            environmentServiceNameAzureRM: "myServiceConnection"
+        - task: TerraformTaskV4@4
+          displayName: Terraform apply
+          inputs:
+            provider: "azurerm"
+            command: "apply"
+            workingDirectory: "$(System.DefaultWorkingDirectory)/terraform"
+            environmentServiceNameAzureRM: "myServiceConnection"
 
 
   - stage: Build

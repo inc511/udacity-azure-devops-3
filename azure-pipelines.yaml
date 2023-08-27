@@ -9,7 +9,7 @@ variables:
 
 stages:
 - stage: Build
-    jobs:
+  jobs:
     - job: BuildInfrastructure
       steps:
         - script: |

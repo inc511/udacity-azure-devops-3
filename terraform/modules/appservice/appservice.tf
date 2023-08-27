@@ -14,6 +14,7 @@ resource "azurerm_linux_web_app" "test" {
 
   app_settings = {
     "WEBSITE_RUN_FROM_PACKAGE" = 0
+    "WEBSITE_WEBDEPLOY_USE_SCM" = "true"
   }
   site_config {
     always_on = false

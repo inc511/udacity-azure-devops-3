@@ -288,8 +288,8 @@ stages:
                 unzip $(Build.BuildId)-uitests.zip -d $(Build.BuildId)-uitests
                 cd $(Build.BuildId)-uitests
                 wget https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/116.0.5845.96/linux64/chromedriver-linux64.zip
-                pwd
-                unzip -o chromedriver_linux64.zip
+                $temp = pwd
+                unzip -o $temp/chromedriver_linux64.zip
                 sudo ln -s $PWD/chromedriver /usr/bin/chromedriver
                 export PATH=$PATH:/usr/bin/chromedriver
 

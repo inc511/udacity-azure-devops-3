@@ -278,12 +278,6 @@ stages:
                 sudo apt-get install -y chromium-browser
                 sudo pip3 install selenium
 
-                sudo apt-get install libxkbcommon0
-                sudo apt-get install libxdamage1
-                sudo apt-get install libgbm1
-                sudo apt-get install libpango-1.0
-                sudo apt-get install libcairo2
-
                 cd $(Pipeline.Workspace)/selenium-test
                 unzip $(Build.BuildId)-uitests.zip -d $(Build.BuildId)-uitests
                 cd $(Build.BuildId)-uitests

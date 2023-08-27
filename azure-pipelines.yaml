@@ -277,7 +277,7 @@ stages:
                 sudo apt-get install unzip -y
                 sudo apt-get install -y chromium-browser
                 sudo pip3 install selenium
-                /usr/bin/chrome
+
                 sudo apt-get install libxkbcommon0
                 sudo apt-get install libxdamage1
                 sudo apt-get install libgbm1

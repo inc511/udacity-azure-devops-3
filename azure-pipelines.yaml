@@ -280,11 +280,11 @@ stages:
                 unzip $(Build.BuildId)-uitests.zip -d $(Build.BuildId)-uitests
                 cd $(Build.BuildId)-uitests
                 wget https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/116.0.5845.96/linux64/chromedriver-linux64.zip
-                unzip -o chromedriver_linux64.zip
-                sudo ln -s $PWD/chromedriver /usr/bin/chromedriver
+                unzip -o $(Build.BuildId)-uitests/chromedriver_linux64.zip
+                sudo ln $PWD/chromedriver /usr/bin/chromedriver
                 export PATH=$PATH:/usr/bin/chromedriver
 
-                sudo python3 tét-ui.py >> selenium_result.log 
+                sudo python3 test-ui.py >> selenium_result.log 
 
                 sudo cat selenium_result.log
                 sudo cp selenium_result.log /var/log/

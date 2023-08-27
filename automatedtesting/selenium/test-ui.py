@@ -11,8 +11,10 @@ def get_ts():
 def setup_chrome_driver():
     print(get_ts() + "Starting the browser...\nOpenning Chrome...")
     options = ChromeOptions()
-    options.add_argument("--no-sandbox")
     options.add_argument("--headless")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--remote-debugging-port=9222")
     driver = webdriver.Chrome(options=options)
     #driver = webdriver.Chrome()
     return driver

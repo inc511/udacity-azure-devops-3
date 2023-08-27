@@ -162,8 +162,8 @@ stages:
       - deployment: test_on_vm
         displayName: UI testing
         environment:
-        name: $(environmentName)
-        resourceType: VirtualMachine
+          name: $(environmentName)
+          resourceType: VirtualMachine
         strategy:
           runOnce:
             deploy:

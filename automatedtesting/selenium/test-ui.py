@@ -11,14 +11,8 @@ def get_ts():
 def setup_chrome_driver():
     print(get_ts() + "Starting the browser...\nOpenning Chrome...")
     options = ChromeOptions()
-    # --uncomment when running in Azure DevOps.
     options.add_argument("--no-sandbox")
-    options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--headless")
-    options.add_argument("start-maximized")
-    options.add_argument("disable-infobars")
-    options.add_argument("--disable-extensions")
-    options.add_argument("--disable-gpu")
     driver = webdriver.Chrome(options=options)
     #driver = webdriver.Chrome()
     return driver
@@ -81,14 +75,12 @@ def removeItem(driver, modifiedItems):
 
     print(get_ts() + "All items have removed from cart")
 
-def main():
+if __name__ == "__main__":
     driver = setup_chrome_driver()
     login('standard_user', 'secret_sauce', driver)
     modifiedItems = "6"
     addItem(driver, modifiedItems)
     removeItem(driver, modifiedItems)
-
-main()
 
 
 

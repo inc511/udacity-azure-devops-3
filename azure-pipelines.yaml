@@ -8,49 +8,46 @@ variables:
     environmentName: 'test'
 
 stages:
+#--------------------------------------------#  
+# BUILD STAGE
+#--------------------------------------------#    
 - stage: Build
   jobs:
-    - job: BuildInfrastructure
-      steps:
-        - script: |
-            echo $(System.DefaultWorkingDirectory)
-          displayName: "Show working directory"
+  - job: BuildInfrastructure
+    steps:
+    #--------------------------------------------#  
+    # Use Terraform to create the Infrastructure      
+    # Install Terraform on the pipeline agent 
+    - task: TerraformInstaller@0
+      displayName: 'Terrafom installation'
+      inputs:
+        terraformVersion: '1.2.9'
+    
+    # Run Terraform Init on the pipeline agent 
+    - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV3@3
+      displayName: 'Terrafom init'
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+        backendServiceArm: '$(azureServiceConnectionId)'
+        backendAzureRmResourceGroupName: 'vm1_group'
+        backendAzureRmStorageAccountName: 'thanhnd1'
+        backendAzureRmContainerName: 'tfstate'
+        backendAzureRmKey: 'test.terraform.tfstate'
 
-        # Install Terraform on the pipeline agent
-        - task: charleszipp.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-installer.TerraformInstaller@0
-          displayName: "Terrafom installation"
-          inputs:
-            terraformVersion: "latest"
-        - task: TerraformTaskV4@4
-          displayName: Terraform init
-          inputs:
-            provider: "azurerm"
-            command: "init"
-            workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
-            backendServiceArm: '$(azureServiceConnectionId)'
-            backendAzureRmResourceGroupName: 'vm1_group'
-            backendAzureRmStorageAccountName: 'thanhnd1'
-            backendAzureRmContainerName: "tfstate"
-            backendAzureRmKey: 'test.terraform.tfstate'
-        - task: TerraformTaskV4@4
-          displayName: Terraform validate
-          inputs:
-            provider: "azurerm"
-            command: "validate"
-        - task: TerraformTaskV4@4
-          displayName: Terraform plan
-          inputs:
-            provider: "azurerm"
-            command: "plan"
-            workingDirectory: "$(System.DefaultWorkingDirectory)/terraform"
-            environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
-        - task: TerraformTaskV4@4
-          displayName: Terraform apply
-          inputs:
-            provider: "azurerm"
-            command: "apply"
-            workingDirectory: "$(System.DefaultWorkingDirectory)/terraform"
-            environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
+    - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV3@3
+      displayName: Terraform validate
+      inputs:
+        provider: 'azurerm'
+        command: 'validate'
+    - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV3@3
+      displayName: Terraform apply
+      inputs:
+        provider: 'azurerm'
+        command: 'apply'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+        environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
 
 
 - stage: Prepare_data

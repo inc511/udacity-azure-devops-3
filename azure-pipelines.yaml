@@ -156,14 +156,14 @@ stages:
             displayName: Run Data Validation Tests
             continueOnError: true
             inputs:
-              script: 'newman run data-test.json -e evironment-test.json --reporters cli,junit --reporter-junit-export TEST-DataValidation.xml'
+              script: 'newman run data-test.json -e environment-test.json --reporters cli,junit --reporter-junit-export TEST-DataValidation.xml'
               workingDirectory: '$(System.DefaultWorkingDirectory)'
           # Postman Regression Test Suite    
           - task: CmdLine@2
             displayName: Run Regression Tests
             continueOnError: true
             inputs:
-              script: 'newman run regression.json -e evironment-test.json --reporters cli,junit --reporter-junit-export TEST-Regression.xml'
+              script: 'newman run regression.json -e environment-test.json --reporters cli,junit --reporter-junit-export TEST-Regression.xml'
               workingDirectory: '$(System.DefaultWorkingDirectory)'
           # Postman - Publish Results 
           - task: PublishTestResults@2

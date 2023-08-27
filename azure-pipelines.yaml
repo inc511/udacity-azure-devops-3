@@ -270,5 +270,5 @@ stages:
             inputs:
              testResultsFormat: JUnit
              testResultsFiles: '$(System.DefaultWorkingDirectory)/log/newman/*.xml'
-                  targetPath: '$(System.DefaultWorkingDirectory)/log/selenium/ui-logs.log'
-                  artifactName: 'drop-selenium-logs'
+                targetPath: '$(System.DefaultWorkingDirectory)/log/selenium/ui-logs.log'
+                artifactName: 'drop-selenium-logs'

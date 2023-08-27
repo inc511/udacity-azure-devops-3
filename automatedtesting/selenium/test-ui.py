@@ -57,20 +57,17 @@ def addItem(driver, itemsAdded):
     print(get_ts() + "Add items to cart completed!")
 
 # Method to remove all items to cart and verify the result
-def removeItem(driver, modifiedItems):
+def removeItem(driver):
     print(get_ts() + "Start testing remove item from the cart")
 
     itemList = driver.find_elements(By.CSS_SELECTOR, '.cart_item')
 
-    for i in range(0, len(itemList)):
-        item = itemList[i]
+    for product in range(0, len(itemList)):
+        product_item = product.find_element(By.CLASS_NAME,'inventory_item_name').text
+        product.find_element(By.CLASS_NAME,'cart_button').click()
+        print(get_ts() + product_item +' removed from the cart')
 
-        itemName = item.find_element(By.CLASS_NAME, 'inventory_item_name').text
-        print(get_ts() + "Remove item: {} from cart".format(itemName))
-        button = item.find_element(By.CSS_SELECTOR, '.item_pricebar > button')
-        button.click()
-
-    totalItemOnCartLabel = driver.find_element( By.CLASS_NAME, 'shopping_cart_link').text
+    totalItemOnCartLabel = driver.find_element( By.CLASS_NAME, 'shopping_cart_badge').text
 
     print(get_ts() +"Total items removed from cart: {}".format(modifiedItems))
     assert "" == totalItemOnCartLabel, "Yeah, we should have a empty cart"
@@ -82,7 +79,4 @@ if __name__ == "__main__":
     login('standard_user', 'secret_sauce', driver)
     modifiedItems = "6"
     addItem(driver, modifiedItems)
-    removeItem(driver, modifiedItems)
-
-
-
+    removeItem(driver)

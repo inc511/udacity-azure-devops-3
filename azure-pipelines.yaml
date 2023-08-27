@@ -53,8 +53,8 @@ stages:
             environmentServiceNameAzureRM: "myServiceConnection"
 
 
-  - stage: Build
-    jobs:
+- stage: Build
+  jobs:
     - job: Build
       pool:
         vmImage: 'Ubuntu-18.04'
@@ -86,12 +86,12 @@ stages:
         inputs:
          targetPath: $(Build.BuildId)-selenium.zip
          artifact: drop-selenium
-  - stage: DeployApp
-    displayName: Deploy App to Custom VM
-    jobs:
+- stage: DeployApp
+  displayName: Deploy App to Custom VM
+  jobs:
     - deployment: FakeRestAPI
       pool:
-        vmImage: 'Ubuntu-28.04'
+        vmImage: 'Ubuntu-18.04'
       environment:
         name: $(environmentName)
         resourceType: VirtualMachine

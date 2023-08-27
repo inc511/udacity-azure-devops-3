@@ -138,8 +138,8 @@ stages:
                 AZURE_LOG_ANALYTICS_ID: $(AZURE_LOG_ANALYTICS_ID)
                 AZURE_LOG_ANALYTICS_PRIMARY_KEY: $(AZURE_LOG_ANALYTICS_PRIMARY_KEY)
               displayName: Configure VM   
-  - stage: Test
-    jobs:
+- stage: Test
+  jobs:
       - deployment: test_on_vm
         displayName: UI testing
         environment:

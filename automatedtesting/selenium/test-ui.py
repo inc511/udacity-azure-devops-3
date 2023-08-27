@@ -33,7 +33,7 @@ def login (user, password, driver):
 
     product_label = driver.find_element(By.CSS_SELECTOR, "div.header_secondary_container > span.title").text
     assert "Products" in product_label
-    print(get_ts() + 'Login successfully as {user}.')
+    print(get_ts() + 'Login successfully as ' + user)
 
 # Method to add all items to cart and verify the result
 def addItem(driver, itemsAdded):
@@ -59,18 +59,20 @@ def addItem(driver, itemsAdded):
 # Method to remove all items to cart and verify the result
 def removeItem(driver):
     print(get_ts() + "Start testing remove item from the cart")
+    driver.find_element(By.CLASS_NAME,'shopping_cart_link').click()
+    assert 'https://www.saucedemo.com/cart.html' in driver.current_url
 
-    itemList = driver.find_elements(By.CSS_SELECTOR, '.cart_item')
+    cartItems = driver.find_elements(By.CLASS_NAME,'cart_item')
 
-    for product in range(0, len(itemList)):
+    for product in cartItems:
         product_item = product.find_element(By.CLASS_NAME,'inventory_item_name').text
         product.find_element(By.CLASS_NAME,'cart_button').click()
         print(get_ts() + product_item +' removed from the cart')
 
-    totalItemOnCartLabel = driver.find_element( By.CLASS_NAME, 'shopping_cart_badge').text
+    itemLeft = len(driver.find_elements(By.CLASS_NAME,'cart_item'))
 
     print(get_ts() +"Total items removed from cart: {}".format(modifiedItems))
-    assert "" == totalItemOnCartLabel, "Yeah, we should have a empty cart"
+    assert 0 == itemLeft, "Yeah, we should have a empty cart"
 
     print(get_ts() + "All items have removed from cart")
 

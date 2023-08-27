@@ -271,7 +271,7 @@ stages:
               script: |           
                 #! /bin/bash
 
-                # Setup environment (pthon, selenium)
+                # Setup environment (python, selenium)
                 sudo apt-get upgrade -y
                 sudo apt-get install python3-pip -y
                 sudo apt-get install unzip -y
@@ -281,7 +281,7 @@ stages:
                 cd $(Pipeline.Workspace)/selenium-test
                 unzip $(Build.BuildId)-uitests.zip -d $(Build.BuildId)-uitests
                 cd $(Build.BuildId)-uitests
-                wget https://chromedriver.storage.googleapis.com/112.0.5615.49/chromedriver_linux64.zip 
+                wget https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/116.0.5845.96/linux64/chromedriver-linux64.zip
                 unzip -o chromedriver_linux64.zip
                 sudo ln -s $PWD/chromedriver /usr/bin/chromedriver
                 export PATH=$PATH:/usr/bin/chromedriver

@@ -17,7 +17,7 @@ stages:
           displayName: "Show working directory"
 
         # Install Terraform on the pipeline agent
-        - task: charleszipp.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-installer.TerraformInstaller@1
+        - task: charleszipp.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-installer.TerraformInstaller@0
           displayName: "Terrafom installation"
           inputs:
             terraformVersion: "latest"
